@@ -21,7 +21,27 @@ CSPSP should run on any PSP with a custom firmware; simply copy the game into ms
 ### PPSSPP
 You can also run CSPSP using the [PPSSPP](https://www.ppsspp.org/) emulator, though the latest official release does not yet support online functionality. However, online/infrastructure support is in development (https://github.com/hrydgard/ppsspp/issues/14256), and you can find links to test builds that do already support CSPSP online (e.g. https://github.com/hrydgard/ppsspp/issues/14256#issuecomment-1136256118).
 
-## Building
+### Android
+
+This fork includes a native Android port built on the JGE engine. It renders with OpenGL ES 1.1, plays audio via SoundPool/MediaPlayer, and uses POSIX sockets for networking — so it connects to the same master server and community-hosted game servers as the PSP and PPSSPP versions.
+
+**Controls**: PS4 (DualShock 4) controller via Bluetooth or USB OTG.
+- Left stick: movement
+- D-pad / face buttons: navigate menus, buy menu, actions
+- L1/R1: aim/secondary action
+- Start/Select: menu actions
+
+Touch overlay controls are planned for a future release.
+
+**Building the Android APK** (requires Android Studio + NDK):
+```
+git clone https://github.com/SarahRoseLives/csandroid.git
+cd csandroid/android
+gradlew assembleDebug
+```
+The APK is at `android/app/build/outputs/apk/debug/app-debug.apk`.
+
+## Building (PSP)
 
 The repo has been updated and tested to build with Minimalist PSPSDK 0.10.0 on Windows.
 1. Download and install [MINPSPW 0.10.0](https://sourceforge.net/projects/minpspw/files/SDK%20%2B%20devpak/pspsdk%200.10.0/)
