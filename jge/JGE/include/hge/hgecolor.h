@@ -13,7 +13,7 @@
 
 //#include "hge.h"
 
-#include "..\JTypes.h"
+#include "../JTypes.h"
 
 #define hgeColor hgeColorRGB
 

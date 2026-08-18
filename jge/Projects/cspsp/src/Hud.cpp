@@ -114,6 +114,8 @@ void Hud::Render()
 
 		#ifdef WIN32
 		mRenderer->SetTexBlend(BLEND_SRC_ALPHA, BLEND_ONE);
+		#elif defined(ANDROID)
+		mRenderer->SetTexBlend(BLEND_SRC_ALPHA, BLEND_ONE);
 		#else
 		mKillEvents[i].weapon->mBlend = GU_TFX_ADD;
 		#endif
@@ -124,6 +126,8 @@ void Hud::Render()
 		mKillEvents[i].weapon->SetColor(ARGB(255,255,255,255));
 
 		#ifdef WIN32
+		mRenderer->SetTexBlend(BLEND_SRC_ALPHA, BLEND_ONE_MINUS_SRC_ALPHA);
+		#elif defined(ANDROID)
 		mRenderer->SetTexBlend(BLEND_SRC_ALPHA, BLEND_ONE_MINUS_SRC_ALPHA);
 		#else
 		mKillEvents[i].weapon->mBlend = GU_TFX_MODULATE;

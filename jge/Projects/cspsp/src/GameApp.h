@@ -20,6 +20,7 @@
 
 #ifdef WIN32
 #include <ctime>
+#elif defined(ANDROID)
 #else
 #include "mp3player.h"
 

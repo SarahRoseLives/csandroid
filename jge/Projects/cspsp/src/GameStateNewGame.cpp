@@ -27,6 +27,26 @@ void GameStateNewGame::Create()
 		sprintf(buffer,"test%d",i);
 		mMapsListBox->AddItem(new MapItem(buffer));
 	}
+	#elif defined(ANDROID)
+	DIR *dip = opendir("maps");
+	if (dip != NULL) {
+		struct dirent *dit;
+		while ((dit = readdir(dip)) != NULL) {
+			if (strcmp(dit->d_name, ".") == 0 || strcmp(dit->d_name, "..") == 0)
+				continue;
+			bool isDir = (dit->d_type == DT_DIR);
+			if (dit->d_type == DT_UNKNOWN) {
+				struct stat st;
+				char p[512];
+				snprintf(p, sizeof(p), "maps/%s", dit->d_name);
+				if (stat(p, &st) == 0)
+					isDir = S_ISDIR(st.st_mode);
+			}
+			if (isDir)
+				mMapsListBox->AddItem(new MapItem(dit->d_name));
+		}
+		closedir(dip);
+	}
 	#else
 	
 	int index = 0;

@@ -7,6 +7,7 @@
 #include <vector>
 
 #ifdef WIN32
+#elif defined(ANDROID)
 #else
 #include <psputility.h>
 #endif

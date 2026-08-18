@@ -47,7 +47,7 @@ void GameStatePlay::Create()
 	}
 
 	//mMusic = mSoundSystem->LoadMusic("sfx/Raindrops.mp3");
-	#ifdef WIN32
+	#if defined(WIN32) || defined(ANDROID)
 	mMusic = mSoundSystem->LoadMusic("sfx/Raindrops.mp3");
 	#else
 	//mMusic = mSoundSystem->LoadMusic("sfx/Raindrops.mp3");
@@ -100,7 +100,7 @@ void GameStatePlay::Destroy()
 	for (int i=0; i<3; i++) {
 		SAFE_DELETE(gParticleSystems[i]);
 	}
-	#ifdef WIN32
+	#if defined(WIN32) || defined(ANDROID)
 	//mEngine->StopMP3();
 	//mEngine->FreeMP3();
 	#else
@@ -194,7 +194,7 @@ void GameStatePlay::Start()
 		if (strcmp(music,"on") == 0) {
 			mMusicSwitch = ON;
 			//mSoundSystem->PlayMusic(mMusic,true);
-			#ifdef WIN32
+			#if defined(WIN32) || defined(ANDROID)
 			mSoundSystem->PlayMusic(mMusic,true);
 			#else
 			//mSoundSystem->PlayMusic(mMusic,true);
@@ -216,7 +216,7 @@ void GameStatePlay::End()
 
 	//mSoundSystem->StopMusic(mMusic);
 	if (mMusicSwitch == ON) {
-		#ifdef WIN32
+		#if defined(WIN32) || defined(ANDROID)
 		mSoundSystem->StopMusic(mMusic);
 		#else
 		//mSoundSystem->StopMusic(mMusic);

@@ -22,6 +22,7 @@
 #include "AStar.h"
 
 #ifdef WIN32
+#elif defined(ANDROID)
 #else
 #include "mp3player.h"
 #endif

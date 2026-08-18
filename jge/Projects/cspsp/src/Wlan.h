@@ -11,6 +11,22 @@
 
 #define bzero(p, l) memset(p, 0, l)
 #define bcopy(s, t, l) memmove(t, s, l)
+#elif defined(ANDROID)
+#include "JGE.h"
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <unistd.h>
+#include <netinet/in.h>
+#include <arpa/inet.h>
+#include <sys/socket.h>
+#include <sys/select.h>
+#include <netdb.h>
+#include <fcntl.h>
+#include <errno.h>
+
+#define bzero(p, l) memset(p, 0, l)
+#define bcopy(s, t, l) memmove(t, s, l)
 #else
 #include <stdlib.h>
 #include <pspsdk.h>

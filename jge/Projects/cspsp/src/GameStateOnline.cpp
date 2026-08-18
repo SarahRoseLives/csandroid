@@ -263,6 +263,8 @@ void GameStateOnline::End()
 
 		#ifdef WIN32
 		rmdir(directory);
+		#elif defined(ANDROID)
+		rmdir(directory);
 		#else
 		sceIoRmdir(directory);
 		#endif

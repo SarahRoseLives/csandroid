@@ -11,7 +11,7 @@
 #ifndef _VECTOR2D_H
 #define _VECTOR2D_H
 
-#ifdef WIN32
+#if defined(WIN32) || defined(ANDROID)
 #include <math.h>
 #else
 #include <fastmath.h>

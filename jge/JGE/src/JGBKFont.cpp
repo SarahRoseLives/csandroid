@@ -89,7 +89,7 @@ bool JGBKFont::Init(const char* engFileName, const char* chnFileName, int fontsi
 	mSprites = new JQuad*[mCacheSize];
 	mGBCode = new int[mCacheSize];
 
-#ifdef WIN32
+#if defined(WIN32) || defined(ANDROID)
 	mCharBuffer = new DWORD[mFontSize*mFontSize];
 #endif
 
@@ -136,7 +136,7 @@ bool JGBKFont::Init(const char* engFileName, const char* chnFileName, int fontsi
 }
 
 
-#ifdef WIN32
+#if defined(WIN32) || defined(ANDROID)
 #else
 void SwizzlePlot(u8* out, PIXEL_TYPE color, int i, int j, unsigned int width, unsigned int height)
 {
@@ -188,7 +188,7 @@ int JGBKFont::PreCacheChar(const BYTE *ch)
 	if (mCurr >= mCacheSize)
 		mCurr = 0;
 
-#ifdef WIN32
+#if defined(WIN32) || defined(ANDROID)
 	int x = 0;
 	int y = 0;
 
@@ -213,7 +213,7 @@ int JGBKFont::PreCacheChar(const BYTE *ch)
 
 			bitCount = mFontSize;
 
-#ifdef WIN32
+#if defined(WIN32) || defined(ANDROID)
 			x = 0;
 #else
 			x = (int)mSprites[index]->mX;
@@ -225,7 +225,7 @@ int JGBKFont::PreCacheChar(const BYTE *ch)
 				BYTE bitMask = 0x80;
 				for (int z=0;z<8&&bitCount;z++)
 				{
-#ifdef WIN32
+#if defined(WIN32) || defined(ANDROID)
 					if ((bits & bitMask) != 0)
 						mCharBuffer[y*mFontSize+x] = ARGB(255,255,255,255);
 					else
@@ -257,7 +257,7 @@ int JGBKFont::PreCacheChar(const BYTE *ch)
 		for (int i=0;i<size;)
 		{
 
-#ifdef WIN32
+#if defined(WIN32) || defined(ANDROID)
 			x = 0;
 #else
 			x = (int)mSprites[index]->mX;
@@ -269,7 +269,7 @@ int JGBKFont::PreCacheChar(const BYTE *ch)
 		
 				for (n=0;n<(mFontSize-8)/2;n++)
 				{
-	#ifdef WIN32
+	#if defined(WIN32) || defined(ANDROID)
 					mCharBuffer[y*mFontSize+x] = ARGB(0,0,0,0);
 	#else
 					SwizzlePlot(pTexture, ARGB(0,0,0,0), x*PIXEL_SIZE, y, mTexture->mTexWidth*PIXEL_SIZE, mCacheImageHeight);
@@ -286,7 +286,7 @@ int JGBKFont::PreCacheChar(const BYTE *ch)
 				BYTE bitMask = 0x80;
 				for (int z=0;z<8&&bitCount;z++)
 				{
-				#ifdef WIN32
+				#if defined(WIN32) || defined(ANDROID)
 					if ((bits & bitMask) != 0)
 						mCharBuffer[y*mFontSize+x] = ARGB(255,255,255,255);
 					else
@@ -308,7 +308,7 @@ int JGBKFont::PreCacheChar(const BYTE *ch)
 				
 				for (n=0;n<(mFontSize-8)/2;n++)
 				{
-				#ifdef WIN32
+				#if defined(WIN32) || defined(ANDROID)
 					mCharBuffer[y*mFontSize+x] = ARGB(0,0,0,0);
 				#else
 					SwizzlePlot(pTexture, ARGB(0,0,0,0), x*PIXEL_SIZE, y, mTexture->mTexWidth*PIXEL_SIZE, mCacheImageHeight);
@@ -324,7 +324,7 @@ int JGBKFont::PreCacheChar(const BYTE *ch)
 	
 	mGBCode[index] = code;
 
-#ifdef WIN32
+#if defined(WIN32) || defined(ANDROID)
 	x = (int)mSprites[index]->mX;
 	y = (int)mSprites[index]->mY;
 

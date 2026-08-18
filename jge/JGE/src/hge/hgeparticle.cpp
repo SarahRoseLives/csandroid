@@ -6,12 +6,12 @@
 ** hgeParticleSystem helper class implementation
 */
 
-#include "..\..\include\JGE.h"
-#include "..\..\include\JTypes.h"
-#include "..\..\include\JRenderer.h"
-#include "..\..\include\JFileSystem.h"
+#include "../../include/JGE.h"
+#include "../../include/JTypes.h"
+#include "../../include/JRenderer.h"
+#include "../../include/JFileSystem.h"
 
-#include "..\..\include\hge\hgeparticle.h"
+#include "../../include/hge/hgeparticle.h"
 
 
 //HGE	*hgeParticleSystem::hge=0;

@@ -11,6 +11,10 @@
 #include "ListBox.h"
 
 #ifdef WIN32
+#elif defined(ANDROID)
+#include <dirent.h>
+#include <unistd.h>
+#include <sys/stat.h>
 #else
 #include <malloc.h>
 #include <pspdisplay.h>

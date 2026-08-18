@@ -6,7 +6,7 @@
 #include "Person.h"
 #include <vector>
 
-#ifdef WIN32
+#if defined(WIN32) || defined(ANDROID)
 #include <math.h>
 #else
 #include <fastmath.h>

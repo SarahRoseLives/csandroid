@@ -13,6 +13,13 @@
 
 #ifdef WIN32
 
+#elif defined(ANDROID)
+
+#include <GLES/gl.h>
+#include <GLES/glext.h>
+#include <time.h>
+#include <string.h>
+
 #else
 
 #include <pspgu.h>
@@ -57,7 +64,7 @@
 #define SCREEN_WIDTH_2			240.0f
 #define SCREEN_HEIGHT_2			136.0f
 
-#ifdef WIN32
+#if defined(WIN32) || defined(ANDROID)
 //	#define DEFAULT_BLEND		BLEND_DEFAULT
 //	#define BLEND_OPTION_ADD	BLEND_COLORADD
 //	#define BLEND_OPTION_BLEND	(BLEND_COLORADD | BLEND_ALPHABLEND | BLEND_NOZWRITE)
@@ -68,13 +75,18 @@
 #endif
 
 
-#if defined (WIN32)
+#if defined (WIN32) || defined(ANDROID)
 
+	#if defined(WIN32)
 	#include <windows.h>
 	#include <gl/gl.h>
 	#include <gl/glu.h>
 
 	#include "../Dependencies/include/fmod.h"
+	#else
+	#include <GLES/gl.h>
+	#include <GLES/glext.h>
+	#endif
 
 	//#include "../HGE/include/hge.h"
 	//#include "../HGE/include/hgeSprite.h"
@@ -88,6 +100,13 @@
 	typedef unsigned char u8;
 	typedef unsigned short u16;
 	typedef unsigned long u32;
+
+	#if defined(ANDROID)
+	// These are provided by <windows.h> on Win32; define them ourselves on Android.
+	typedef unsigned char BYTE;
+	typedef unsigned short WORD;
+	typedef unsigned long DWORD;
+	#endif
 
 
 	#define BLEND_ZERO					GL_ZERO
@@ -304,7 +323,7 @@ public:
 
 	int mFilter;
 
-#ifdef WIN32
+#if defined(WIN32) || defined(ANDROID)
 	GLuint mTexId;
 #else
 
@@ -414,7 +433,7 @@ public:
 
 	JTexture* mTex;
 	
-#ifdef WIN32
+#if defined(WIN32) || defined(ANDROID)
 	float mTX0;
 	float mTY0;
 	float mTX1;

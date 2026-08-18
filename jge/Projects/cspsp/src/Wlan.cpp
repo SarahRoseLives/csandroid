@@ -138,6 +138,171 @@ int SocketClose(Socket* socket)
 	return 1;
 }
 
+#elif defined(ANDROID)
+int WlanInit()
+{
+	if (wlanInitialized) return 0;
+	wlanInitialized = true;
+	return 0;
+}
+
+int WlanTerm()
+{
+	if (!wlanInitialized) return 0;
+	wlanInitialized = false;
+	return 0;
+}
+
+std::vector<ConnectionConfig> GetConnectionConfigs()
+{
+	std::vector<ConnectionConfig> connections;
+	ConnectionConfig config;
+	strcpy(config.name, "Active Network");
+	config.index = 0;
+	connections.push_back(config);
+	return connections;
+}
+
+int UseConnectionConfig(int config)
+{
+	return 0;
+}
+
+int GetConnectionState(int state)
+{
+	// Android's network is managed by the OS; treat as immediately connected.
+	return 4;
+}
+
+char* GetIPAddress()
+{
+	static char ip[32] = "0.0.0.0";
+	return ip;
+}
+
+int SocketFree(Socket* socket)
+{
+	if (socket->sock >= 0)
+		close(socket->sock);
+	delete socket;
+	return 0;
+}
+
+int SetSockNoBlock(int s, u32 val)
+{
+	int flags = fcntl(s, F_GETFL, 0);
+	if (val)
+		flags |= O_NONBLOCK;
+	else
+		flags &= ~O_NONBLOCK;
+	fcntl(s, F_SETFL, flags);
+	return 1;
+}
+
+int SocketConnect(Socket* socket1, char* host, int port)
+{
+	if (!wlanInitialized) return 0;
+
+	struct addrinfo hints;
+	struct addrinfo* res = NULL;
+	memset(&hints, 0, sizeof(hints));
+	hints.ai_family = AF_INET;
+	hints.ai_socktype = SOCK_STREAM;
+
+	char portstr[16];
+	snprintf(portstr, sizeof(portstr), "%d", port);
+
+	if (getaddrinfo(host, portstr, &hints, &res) != 0 || res == NULL)
+		return 0;
+
+	socket1->sock = socket(AF_INET, SOCK_STREAM, 0);
+	if (socket1->sock < 0) {
+		freeaddrinfo(res);
+		return 0;
+	}
+
+	socket1->addrTo = *(struct sockaddr_in*)res->ai_addr;
+	freeaddrinfo(res);
+
+	SetSockNoBlock(socket1->sock, 1);
+	connect(socket1->sock, (struct sockaddr*)&socket1->addrTo, sizeof(socket1->addrTo));
+
+	return 1;
+}
+
+int SocketConnectUdp(Socket* socket1, char* host, int port)
+{
+	if (!wlanInitialized) return 0;
+
+	struct addrinfo hints;
+	struct addrinfo* res = NULL;
+	memset(&hints, 0, sizeof(hints));
+	hints.ai_family = AF_INET;
+	hints.ai_socktype = SOCK_DGRAM;
+
+	char portstr[16];
+	snprintf(portstr, sizeof(portstr), "%d", port);
+
+	if (getaddrinfo(host, portstr, &hints, &res) != 0 || res == NULL)
+		return 0;
+
+	socket1->sock = socket(AF_INET, SOCK_DGRAM, 0);
+	if (socket1->sock < 0) {
+		freeaddrinfo(res);
+		return 0;
+	}
+
+	socket1->addrTo = *(struct sockaddr_in*)res->ai_addr;
+	freeaddrinfo(res);
+
+	SetSockNoBlock(socket1->sock, 1);
+
+	socket1->addr.sin_family = AF_INET;
+	socket1->addr.sin_addr.s_addr = htonl(INADDR_ANY);
+	socket1->addr.sin_port = htons(0);
+	bind(socket1->sock, (struct sockaddr*)&socket1->addr, sizeof(socket1->addr));
+
+	return 1;
+}
+
+int SocketRecv(Socket* socket, char* buf, int size)
+{
+	int count = recv(socket->sock, buf, size, 0);
+	return count;
+}
+
+int SocketSend(Socket* socket, char* buf, int size)
+{
+	int n = send(socket->sock, buf, size, 0);
+	return n;
+}
+
+int SocketSendUdp(Socket* socket, char* buf, int size)
+{
+	int total = 0;
+	int bytesleft = size;
+	int n;
+
+	while (total < size) {
+		n = sendto(socket->sock, buf + total, bytesleft, 0,
+				(struct sockaddr*)&(socket->addrTo), sizeof(socket->addrTo));
+		if (n < 0) break;
+		total += n;
+		bytesleft -= n;
+	}
+
+	return 1;
+}
+
+int SocketClose(Socket* socket)
+{
+	if (socket->sock >= 0) {
+		close(socket->sock);
+		socket->sock = -1;
+	}
+	return 1;
+}
+
 #else
 int WlanInit()
 {
@@ -147,7 +312,6 @@ int WlanInit()
 	wlanInitialized = true;
 	return 0;
 }
-
 int WlanTerm()
 {
 	// TODO: doesn't term; another call to pspSdkInetInit fails

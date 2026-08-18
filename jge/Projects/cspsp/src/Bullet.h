@@ -1,7 +1,7 @@
 #ifndef _BULLET_H_
 #define _BULLET_H_
 
-#ifdef WIN32
+#if defined(WIN32) || defined(ANDROID)
 #include <math.h>
 #else
 #include <fastmath.h>

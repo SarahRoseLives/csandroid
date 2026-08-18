@@ -8,6 +8,8 @@
 #include "ListBox.h"
 
 #ifdef WIN32
+#elif defined(ANDROID)
+#include <sys/types.h>
 #else
 #include <malloc.h>
 #include <pspdisplay.h>

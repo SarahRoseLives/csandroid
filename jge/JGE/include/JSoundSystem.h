@@ -23,6 +23,11 @@
 
 	#include <windows.h>
 
+#elif defined(ANDROID)
+
+	#include <time.h>
+	#include <string.h>
+
 #else
 
 	#include <pspgu.h>
@@ -50,6 +55,8 @@ public:
 
 #ifdef WIN32
 	FSOUND_SAMPLE *mTrack;		// MP3 needed to be of "sample" type for FMOD, FMUSIC_MODULE is for MODs
+#elif defined(ANDROID)
+	int mTrack;					// music handle (managed by the MediaPlayer bridge)
 #else
 	JCooleyesMP3* mTrack;
 #endif
@@ -72,6 +79,8 @@ public:
 
 #ifdef WIN32
 	FSOUND_SAMPLE *mSample;
+#elif defined(ANDROID)
+	int mSample;				// SoundPool sound id
 #else
 	//WAVDATA *mSample;
 	SAMPLE *mSample;

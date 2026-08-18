@@ -31,6 +31,17 @@
 	bool JGEGetButtonState(u32 button);
 	bool JGEGetButtonClick(u32 button);
 
+#elif defined(ANDROID)
+
+	#include <GLES/gl.h>
+	#include <time.h>
+	#include <string.h>
+
+	bool JGEGetButtonState(u32 button);
+	bool JGEGetButtonClick(u32 button);
+	u8 JGEGetAnalogX();
+	u8 JGEGetAnalogY();
+
 #else
 
 	#include <pspgu.h>
@@ -77,6 +88,10 @@ private:
 
 	JMusic *mCurrentMusic;
 	
+#elif defined(ANDROID)
+
+	float mDeltaTime;
+
 #else
 	SceCtrlData mCtrlPad;
 	u32 mOldButtons;
@@ -206,7 +221,7 @@ public:
 
 	void Assert(const char *filename, long lineNumber);
 
-#ifdef WIN32
+#if defined(WIN32) || defined(ANDROID)
 	void SetDelta(int delta);
 #endif
 

@@ -47,7 +47,7 @@ void JFileSystem::Destroy()
 JFileSystem::JFileSystem()
 {
 	mZipAvailable = false;
-#ifdef WIN32
+#if defined(WIN32) || defined(ANDROID)
 	mFile = NULL;
 #else
 	mFile = -1;
@@ -124,7 +124,7 @@ bool JFileSystem::OpenFile(const string &filename)
 	}
 	else
 	{
-		#ifdef WIN32
+		#if defined(WIN32) || defined(ANDROID)
 			mFile = fopen(path.c_str(), "rb");
 			if (mFile != NULL)
 			{
@@ -156,7 +156,7 @@ void JFileSystem::CloseFile()
 	if (mZipAvailable && mZipFile != NULL)
 		return;
 
-	#ifdef WIN32
+	#if defined(WIN32) || defined(ANDROID)
 		if (mFile != NULL)
 			fclose(mFile);
 	#else
@@ -174,7 +174,7 @@ int JFileSystem::ReadFile(void *buffer, int size)
 	}
 	else
 	{
-		#ifdef WIN32
+		#if defined(WIN32) || defined(ANDROID)
 			return fread(buffer, 1, size, mFile);
 		#else
 			return sceIoRead(mFile, buffer, size);

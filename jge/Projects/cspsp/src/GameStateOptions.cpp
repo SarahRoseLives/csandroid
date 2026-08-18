@@ -42,7 +42,11 @@ void GameStateOptions::Create()
 	}
 
 	if (strcmp(name,"default") == 0) {
+#if defined(ANDROID)
+		strcpy(name, "Player");
+#else
 		sceUtilityGetSystemParamString(PSP_SYSTEMPARAM_ID_STRING_NICKNAME, name, 15);
+#endif
 		name[15] = '\0';
 
 		movementstyle = ABSOLUTE1;

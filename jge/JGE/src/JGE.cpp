@@ -152,6 +152,100 @@ u8 JGE::GetAnalogY()
 
 
 //////////////////////////////////////////////////////////////////////////
+#elif defined(ANDROID)	///// Android specified code
+
+
+JGE::JGE()
+{
+	mApp = NULL;
+
+	strcpy(mDebuggingMsg, "");
+	Init();
+}
+
+
+JGE::~JGE()
+{
+	JRenderer::Destroy();
+	JFileSystem::Destroy();
+	JSoundSystem::Destroy();
+}
+
+
+void JGE::Init()
+{
+	mDone = false;
+	mPaused = false;
+	mCriticalAssert = false;
+	mClicked = false;
+
+	JRenderer::GetInstance();
+	JFileSystem::GetInstance();
+	JSoundSystem::GetInstance();
+}
+
+void JGE::Run()
+{
+	// The main loop is driven by the Android native activity glue in
+	// android/app/src/main/cpp/main.cpp (polling the ALooper for input and
+	// calling JGE::Update()/Render() every frame).
+}
+
+void JGE::SetDelta(int delta)
+{
+	mDeltaTime = (float)delta / 1000.0f;		// change to second
+}
+
+int JGE::GetTime(void)
+{
+	struct timespec ts;
+	clock_gettime(CLOCK_MONOTONIC, &ts);
+	return (int)(ts.tv_sec * 1000 + ts.tv_nsec / 1000000);
+}
+
+
+float JGE::GetDelta()
+{
+	return mDeltaTime;
+}
+
+
+float JGE::GetFPS()
+{
+	return 1.0f/mDeltaTime;
+}
+
+
+bool JGE::GetButtonState(u32 button)
+{
+	return JGEGetButtonState(button);
+}
+
+
+bool JGE::GetButtonClick(u32 button)
+{
+	if (mClicked) return false;
+	bool click = JGEGetButtonClick(button);
+	if (click) {
+		mClicked = true;
+	}
+	return click;
+}
+
+
+u8 JGE::GetAnalogX()
+{
+	return JGEGetAnalogX();
+}
+
+
+u8 JGE::GetAnalogY()
+{
+	return JGEGetAnalogY();
+}
+
+
+//////////////////////////////////////////////////////////////////////////
 #else		///// PSP specified code
 
 

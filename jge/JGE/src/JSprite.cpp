@@ -144,7 +144,7 @@ void JSprite::Render()
 //			//mQuad->SetColor(ARGB(alpha,255,255,255));
 	
 
-#ifdef WIN32
+#if defined(WIN32) || defined(ANDROID)
 			mFrames[mCurrentFrame]->SetColor(alpha<<24 | mColor);
 //			mQuad->SetFlip(mFlipped[mCurrentFrame], false);
 #else
@@ -305,7 +305,7 @@ void JSprite::SetHotSpot(float x, float y, int index)
 
 }
 
-#ifdef WIN32
+#if defined(WIN32) || defined(ANDROID)
 void JSprite::SetColor(PIXEL_TYPE color) { mColor = (color&0x00ffffff); }
 #else
 void JSprite::SetColor(PIXEL_TYPE color) { mColor = (color&~MASK_ALPHA); }

@@ -16,7 +16,7 @@
 #include "Camera.h"
 #include "Hud.h"
 #include "Danzeff.h"
-#include "HGE/hgeparticle.h"
+#include "hge/hgeparticle.h"
 #include "Wlan.h"
 #include "HttpManager.h"
 

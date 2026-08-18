@@ -25,6 +25,13 @@
 
 	#include <windows.h>
 
+#elif defined(ANDROID)
+
+	#include <GLES/gl.h>
+	#include <GLES/glext.h>
+	#include <time.h>
+	#include <string.h>
+
 #else
 
 	#include <pspgu.h>
@@ -238,6 +245,18 @@ public:
 	/// 
 	//////////////////////////////////////////////////////////////////////////
 	void Enable3D();
+
+#if defined(ANDROID)
+	//////////////////////////////////////////////////////////////////////////
+	/// Tell the renderer the physical surface size so it can letterbox the
+	/// 480x272 logical framebuffer (aspect-fit, black bars).
+	/// 
+	/// @param width - Physical surface width in pixels.
+	/// @param height - Physical surface height in pixels.
+	/// 
+	//////////////////////////////////////////////////////////////////////////
+	void SetDisplaySize(int width, int height);
+#endif
 
 	//////////////////////////////////////////////////////////////////////////
 	/// Restrict all rendering to a rectangular area.
@@ -532,7 +551,7 @@ private:
 	static JRenderer* mInstance;
 
 
-#ifdef WIN32
+#if defined(WIN32) || defined(ANDROID)
 
 	GLuint mCurrentTex;
 
@@ -564,6 +583,15 @@ private:
 	int mCurrentRenderMode;
 	
 	float mFOV;
+
+#if defined(ANDROID)
+	int mDisplayWidth;
+	int mDisplayHeight;
+	int mViewportX;
+	int mViewportY;
+	int mViewportW;
+	int mViewportH;
+#endif
 
 #ifdef USING_MATH_TABLE
 	float mSinTable[360];

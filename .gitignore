@@ -33,3 +33,13 @@
 
 # Other
 Thumbs.db
+
+# Android / Gradle build artifacts
+android/.gradle/
+android/build/
+android/app/build/
+android/app/.cxx/
+android/local.properties
+*.iml
+.idea/
+.cxx/

@@ -1,7 +1,7 @@
 #ifndef _ASTAR_H_
 #define _ASTAR_H_
 
-#ifdef WIN32
+#if defined(WIN32) || defined(ANDROID)
 #include <math.h>
 #else
 #include <fastmath.h>

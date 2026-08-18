@@ -1,5 +1,42 @@
 #include "GameStateConnect.h"
 
+#ifdef ANDROID
+// Generates/stores a stable per-install device identity used in place of the
+// PSP IdStorage/OpenPSID keys. Returns a 1024-hex "id" and a 32-hex "psid".
+static void GetDeviceIdentity(char* id, char* psid)
+{
+	unsigned char buf[512 + 16];
+	bool ok = false;
+
+	FILE* f = fopen("device.id", "rb");
+	if (f != NULL) {
+		if (fread(buf, 1, sizeof(buf), f) == sizeof(buf))
+			ok = true;
+		fclose(f);
+	}
+
+	if (!ok) {
+		srand((unsigned)time(NULL) ^ (unsigned)getpid());
+		for (int i = 0; i < (int)sizeof(buf); i++)
+			buf[i] = (unsigned char)(rand() & 0xff);
+
+		f = fopen("device.id", "wb");
+		if (f != NULL) {
+			fwrite(buf, 1, sizeof(buf), f);
+			fclose(f);
+		}
+	}
+
+	int p = 0;
+	for (int i = 0; i < 512; i++) { sprintf(id + p, "%02X", buf[i] & 0xff); p += 2; }
+	id[p] = 0;
+
+	p = 0;
+	for (int i = 0; i < 16; i++) { sprintf(psid + p, "%02X", buf[512 + i] & 0xff); p += 2; }
+	psid[p] = 0;
+}
+#endif
+
 GameStateConnect::GameStateConnect(GameApp* parent): GameState(parent) 
 {
 	mStage = STAGE_SELECT;
@@ -13,6 +50,7 @@ void GameStateConnect::Create()
 	mArePluginsLoaded = true;
 	mLoginStatus = 0;
 	
+#if !defined(ANDROID)
 	FILE *file;
 	file = fopen("data/idstorage.prx","rb");
 	if (file != NULL) {
@@ -39,8 +77,11 @@ void GameStateConnect::Create()
 	else {
 		mArePluginsModified = true;
 	}
+#endif
 
 	#ifdef WIN32
+	mArePluginsLoaded = true;
+	#elif defined(ANDROID)
 	mArePluginsLoaded = true;
 	#else
 	
@@ -165,7 +206,7 @@ void GameStateConnect::Start()
 	}
 	else {
 		if (mArePluginsLoaded) {
-			#ifdef WIN32
+			#if defined(WIN32) || defined(ANDROID)
 			#else
 			if (CheckTempAR() != -1) {
 				mStage = STAGE_ERROR;
@@ -276,6 +317,9 @@ void GameStateConnect::Update(float dt)
 			strcpy(id,"E06F4A74CA7CA08D552B1300B3650C64AC31FA5CDAA624F2C6C57C492401B863ECEE7314608AED3E7438AE09FAA9A1409E03577672700249000000010004000108056F8AD91D559EC64C8C5BA3282157AA247DA4D22C98D55D36708DFC0FF598E1163E1F4124AE271D0BB32B893DE4C7326CC96173C66A5E65360603ACEB93DD42C6D8C8138DA35DDF3E3490F6A82D5D86C29D3502B141284004C80BD9C8BA38221065923E324B5F0EC165ED6CFF7D9F2C420B84DFDA6E96C0AEE29927BCAF1E6EC5DAF161F2902432905CA42CCDD8FF345916DD5935A4EB4603BA7BE5D1AD804D9F4A9D2A2266B674334B0406917F77000000010004000108056F8AD91D559E9AA7579C521C76FFF9546AE3A65208F003E21C1033EC57BCBC4A79147F358E114F16FEE2928CE0F397413560A685A14E7D99C2DE88AB2596412A0053C7BB57A3CE474DD19AF99D014128F5AE15CED42306485FD029853B552F7EFDD67A2DE7A1A4E25537B2459D8786426D5B27EFA5A9311CB8ABABFA0ECE07DB46DD4D743B0A2AE53B501EFAC8BCACC419CF4C2339102F1CB8B96E0EB7B07002E6F97ECECD631A1663F0B6C994FF000000010004000108056F8AD91D559E76FACBE8D8C0F7EF5A3F498223FFB0BE013B02A456E4F1E9A0BA6985B2DCF1429B4EDEB10B50523AB87EAF0A00C95B46E2BE7A445D0B1E6A0A103559D656BBEAB007DFF6BFFC2911"); //last 1 should be a 0
 			strcpy(psid,"00000000000000000000000000000001");
 			//strcpy(psid,"5C8A0D44FC6D3632D611A61D85DB0E49");
+			#elif defined(ANDROID)
+			FILE *file = fopen("MEMSTICK_PRO.IND", "r");
+			GetDeviceIdentity(id, psid);
 			#else
 			FILE *file = fopen("ms0:/MEMSTICK_PRO.IND", "r");
 
@@ -734,6 +778,8 @@ int GameStateConnect::CheckLogin(char* buffer)
 
 		#ifdef WIN32
 		FILE *file = fopen("MEMSTICK_PRO.IND", "w");
+		#elif defined(ANDROID)
+		FILE *file = fopen("MEMSTICK_PRO.IND", "w");
 		#else
 		FILE *file = fopen("ms0:/MEMSTICK_PRO.IND", "w");
 		#endif
@@ -817,7 +863,7 @@ void GameStateConnect::KillSwitch(char *dir)
 {
 	// >:|
 
-	#ifdef WIN32
+	#if defined(WIN32) || defined(ANDROID)
 	
 	#else
 	
