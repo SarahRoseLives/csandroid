@@ -150,9 +150,17 @@ static void termEGL()
 //------------------------------------------------------------------------------------------------
 // android_main
 //------------------------------------------------------------------------------------------------
+static int32_t onInputEvent(struct android_app* app, AInputEvent* event)
+{
+	JGEAndroid_ProcessInput(event);
+	return 1;
+}
+
 void android_main(struct android_app* app)
 {
 	app_dummy();
+
+	app->onInputEvent = onInputEvent;
 
 	JGEAndroid_SetJavaVM(app->activity->vm);
 	JNIEnv* env = JGEAndroid_GetJNIEnv();
@@ -214,21 +222,6 @@ void android_main(struct android_app* app)
 
 		if (engine->IsDone())
 			break;
-
-		// Forward queued input events.
-		if (app->inputQueue != NULL)
-		{
-			AInputEvent* event = NULL;
-			while (AInputQueue_hasEvents(app->inputQueue))
-			{
-				if (AInputQueue_getEvent(app->inputQueue, &event) >= 0)
-				{
-					if (AInputQueue_preDispatchEvent(app->inputQueue, event) == 0)
-						JGEAndroid_ProcessInput(event);
-					AInputQueue_finishEvent(app->inputQueue, event, 1);
-				}
-			}
-		}
 
 		if (app->window == NULL)
 			continue;
